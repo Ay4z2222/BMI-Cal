@@ -75,3 +75,36 @@ button{font:inherit;cursor:pointer}
 @media print{.panel-form,.actions,.btn-text,.toast,#themeToggle,.empty{display:none!important}body{background:#fff;color:#000}.layout{display:block}.hero{background:#fff;color:#000;border:1px solid #000}.ring-in{background:#fff}}
 .thai-meal-top b{white-space:nowrap}
 .thai-meal-list{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+
+/* ---- Phone support ---- */
+html{-webkit-text-size-adjust:100%}
+button,a,label,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+select{text-overflow:ellipsis}
+.segment-btn,.goal-card{min-height:44px;display:flex;align-items:center;justify-content:center}
+.btn-outline{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
+.mobile-only{display:none}
+.wrap{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right));padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+.toast{bottom:calc(24px + env(safe-area-inset-bottom));max-width:calc(100vw - 32px);text-align:center}
+@media(max-width:560px){
+  body{font-size:16.5px}
+  .wrap{padding:22px max(14px,env(safe-area-inset-left)) calc(48px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right))}
+  .top{margin-bottom:20px;padding-right:52px}
+  h1{font-size:26px}
+  .panel-form{padding:18px 16px;border-radius:18px}
+  .form-title{display:none}
+  .row3{grid-template-columns:repeat(3,1fr);gap:8px}
+  .row3 .field:first-child{grid-column:auto}
+  .row3 label{font-size:13.5px}
+  input[type=number]{padding:0 10px}
+  .goal-card,.segment-btn{font-size:14.5px}
+  .ring{width:196px}.ring-in b{font-size:40px}
+  .hero{gap:22px}
+  .bmi-num{font-size:48px}
+  .rows dd b{font-size:22px}
+  .block{padding:22px 0}
+  .mobile-only{display:inline-flex}
+  .actions .btn-outline{flex:1;justify-content:center}
+}
+@media(max-width:360px){.goal-card,.segment-btn{font-size:13.5px}.ring{width:176px}}

@@ -319,6 +319,9 @@ function calc() {
     target: Math.round(target)
   });
 
+  // Close the on-screen keyboard on phones
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+
   // Reveal Results & Smooth Scroll
   $('result').hidden = false;
   $('result').scrollIntoView({

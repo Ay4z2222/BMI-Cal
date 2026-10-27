@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>คำนวณ BMI แคลอรี่ โปรตีนต่อวัน เกณฑ์คนไทย (เอเชีย-แปซิฟิก)</title>
   <meta name="theme-color" content="#0E3B2E">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E3B2E'/%3E%3Cpath d='M32 50C14 38 14 22 24 19c4-1 7 1 8 4 1-3 4-5 8-4 10 3 10 19-8 31z' fill='white'/%3E%3C/svg%3E">
@@ -45,19 +45,19 @@
     </div>
 
     <div class="row3">
-      <div class="field"><label for="age">อายุ (ปี)</label><input id="age" type="number" inputmode="numeric" min="18" max="100" placeholder="25"></div>
-      <div class="field"><label for="h">ส่วนสูง (ซม.)</label><input id="h" type="number" inputmode="decimal" min="120" max="230" step="0.5" placeholder="170"></div>
-      <div class="field"><label for="w">น้ำหนัก (กก.)</label><input id="w" type="number" inputmode="decimal" min="30" max="250" step="0.1" placeholder="65"></div>
+      <div class="field"><label for="age">อายุ (ปี)</label><input id="age" type="number" enterkeyhint="done" inputmode="numeric" min="18" max="100" placeholder="25"></div>
+      <div class="field"><label for="h">ส่วนสูง (ซม.)</label><input id="h" type="number" enterkeyhint="done" inputmode="decimal" min="120" max="230" step="0.5" placeholder="170"></div>
+      <div class="field"><label for="w">น้ำหนัก (กก.)</label><input id="w" type="number" enterkeyhint="done" inputmode="decimal" min="30" max="250" step="0.1" placeholder="65"></div>
     </div>
     <p class="hint">สำหรับผู้ใหญ่ 18 ปีขึ้นไป</p>
 
     <div class="field">
-      <label for="act">ปกติขยับตัวมากแค่ไหน</label>
+      <label for="act">ออกกำลังกายมากแค่ไหน</label>
       <select id="act">
-        <option value="1.2">นั่งทำงานเป็นหลัก แทบไม่ออกกำลังกาย</option>
-        <option value="1.375">ออกกำลังกายเบา 1–3 วันต่อสัปดาห์</option>
-        <option value="1.55" selected>ออกกำลังกายปานกลาง 3–5 วันต่อสัปดาห์</option>
-        <option value="1.725">ออกกำลังกายหนัก 6–7 วันต่อสัปดาห์</option>
+        <option value="1.2">นั่งทำงานเป็นหลัก ไม่ค่อยออกกำลังกาย</option>
+        <option value="1.375">เบา 1–3 วัน/สัปดาห์</option>
+        <option value="1.55" selected>ปานกลาง 3–5 วัน/สัปดาห์</option>
+        <option value="1.725">หนัก 6–7 วัน/สัปดาห์</option>
       </select>
     </div>
 
@@ -146,6 +146,7 @@
     </div>
     <div class="actions">
       <button id="copyBtn" type="button" class="btn-outline">คัดลอกผล</button>
+      <a href="#calcForm" class="btn-outline mobile-only">แก้ไขข้อมูล</a>
       <button id="printBtn" type="button" class="btn-outline">พิมพ์หรือบันทึกเป็น PDF</button>
     </div>
   </div>
