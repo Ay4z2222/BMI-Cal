@@ -11,10 +11,10 @@ const fmt = n => Math.round(n).toLocaleString('th-TH');
 const MIN = 15, MAX = 35;
 const bands = [
   { to: 18.5, c: '--c-low',  t: 'น้ำหนักน้อย', desc: 'น้ำหนักต่ำกว่าเกณฑ์มาตรฐาน ควรรับประทานอาหารที่มีคุณค่าทางโภชนาการเพิ่มขึ้น', pillClass: 'cat-low' },
-  { to: 23,   c: '--c-ok',   t: 'ปกติ (สมส่วน)', desc: 'น้ำหนักอยู่ในเกณฑ์สุขภาพดี ความเสี่ยงต่อโรคที่เกี่ยวกับความอ้วนอยู่ในระดับต่ำสุด', pillClass: 'cat-ok' },
+  { to: 23,   c: '--c-ok',   t: 'ปกติ', desc: 'น้ำหนักอยู่ในเกณฑ์สุขภาพดี ความเสี่ยงต่อโรคที่เกี่ยวกับความอ้วนอยู่ในระดับต่ำสุด', pillClass: 'cat-ok' },
   { to: 25,   c: '--c-over', t: 'น้ำหนักเกิน', desc: 'น้ำหนักเกินเกณฑ์มาตรฐานเล็กน้อย ควรควบคุมอาหารและออกกำลังกายอย่างสม่ำเสมอ', pillClass: 'cat-over' },
   { to: 30,   c: '--c-ob1',  t: 'อ้วนระดับ 1', desc: 'น้ำหนักเกินเกณฑ์ในระดับที่เริ่มมีความเสี่ยงต่อโรคหัวใจ เบาหวาน และความดัน', pillClass: 'cat-ob1' },
-  { to: MAX,  c: '--c-ob2',  t: 'อ้วนระดับ 2', desc: 'น้ำหนักเกินเกณฑ์ระดับอันตราย ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญเพื่อวางแผนลดน้ำหนัก', pillClass: 'cat-ob2' }
+  { to: MAX,  c: '--c-ob2',  t: 'อ้วนระดับ 2', desc: 'น้ำหนักเกินเกณฑ์ไปมาก ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญเพื่อวางแผน', pillClass: 'cat-ob2' }
 ];
 
 const pct = v => (Math.min(Math.max(v, MIN), MAX) - MIN) / (MAX - MIN) * 100;
@@ -86,12 +86,17 @@ function calc() {
 
   // Input Validation
   if (!age || !h || !w) {
-    err.textContent = '⚠️ กรุณากรอกอายุ ส่วนสูง และน้ำหนักให้ครบถ้วนก่อนคำนวณ';
+    err.textContent = 'กรุณากรอกอายุ ส่วนสูง และน้ำหนักให้ครบถ้วนก่อนคำนวณ';
     err.style.display = 'flex';
     return;
   }
-  if (age < 15 || age > 100 || h < 120 || h > 230 || w < 30 || w > 250) {
-    err.textContent = '⚠️ ค่าที่กรอกอยู่นอกช่วงที่คำนวณได้ (อายุ 15–100 ปี, ส่วนสูง 120–230 ซม., น้ำหนัก 30–250 กก.)';
+  if (age < 18) {
+    err.textContent = 'สูตรในเว็บนี้ออกแบบสำหรับผู้ใหญ่ (18 ปีขึ้นไป) หากอายุต่ำกว่า 18 ปี ควรปรึกษาแพทย์หรือนักกำหนดอาหาร เพราะเกณฑ์ของเด็กและวัยรุ่นต่างออกไป';
+    err.style.display = 'flex';
+    return;
+  }
+  if (age > 100 || h < 120 || h > 230 || w < 30 || w > 250) {
+    err.textContent = 'ค่าที่กรอกอยู่นอกช่วงที่คำนวณได้ (อายุ 18–100 ปี, ส่วนสูง 120–230 ซม., น้ำหนัก 30–250 กก.)';
     err.style.display = 'flex';
     return;
   }
@@ -105,7 +110,7 @@ function calc() {
 
   animateValue($('bmi'), 15, bmi, 500, true);
   $('bmiLabel').textContent = band.t;
-  $('bmiLabel').style.backgroundColor = `var(${band.c})`;
+  $('bmiLabel').style.setProperty('--tagc', `var(${band.c})`);
   if ($('bmiDescription')) {
     $('bmiDescription').textContent = band.desc;
   }
@@ -134,7 +139,7 @@ function calc() {
     } else if (w < lo) {
       weightDiffNote.textContent = `(ปัจจุบันน้ำหนักต่ำกว่าเกณฑ์ปกติประมาณ ${(lo - w).toFixed(1)} กก.)`;
     } else {
-      weightDiffNote.textContent = `(ยอดเยี่ยม! น้ำหนักของคุณอยู่ในช่วงสมส่วนและเหมาะสมกับสรีระ)`;
+      weightDiffNote.textContent = `(น้ำหนักของคุณอยู่ในช่วงปกติแล้ว)`;
     }
   }
 
@@ -185,7 +190,7 @@ function calc() {
   $('water').textContent = waterLiters.toFixed(1);
   if ($('waterGlasses')) {
     const glasses = Math.round(waterLiters / 0.25);
-    $('waterGlasses').textContent = `ประมาณ ${glasses} แก้ว (33 มล./กก.)`;
+    $('waterGlasses').textContent = `ประมาณ ${glasses} แก้ว คิดจาก 33 มล. ต่อน้ำหนัก 1 กก.`;
   }
 
   // Calorie Delta Metric
@@ -195,18 +200,18 @@ function calc() {
   if (deltaEl) {
     deltaEl.textContent = (delta > 0 ? `+${fmt(delta)}` : fmt(delta));
     if (deltaDescEl) {
-      if (delta < 0) deltaDescEl.textContent = 'จำกัดพลังงาน (Calorie Deficit)';
-      else if (delta > 0) deltaDescEl.textContent = 'เพิ่มพลังงาน (Calorie Surplus)';
-      else deltaDescEl.textContent = 'สมดุลพลังงาน (Maintenance)';
+      if (delta < 0) deltaDescEl.textContent = 'กินน้อยกว่าที่ใช้';
+      else if (delta > 0) deltaDescEl.textContent = 'กินมากกว่าที่ใช้';
+      else deltaDescEl.textContent = 'กินเท่าที่ใช้';
     }
   }
 
   // Goal Badge Pill & Explanation
   if ($('goalBadge')) {
     const goalMap = {
-      'lose': '🔥 ลดน้ำหนัก / ลดไขมัน',
-      'keep': '⚖️ รักษาน้ำหนัก / สมดุล',
-      'gain': '💪 เพิ่มกล้ามเนื้อ'
+      'lose': 'ลดน้ำหนัก',
+      'keep': 'คงน้ำหนัก',
+      'gain': 'เพิ่มกล้ามเนื้อ'
     };
     $('goalBadge').textContent = goalMap[goal] || 'สุขภาพดี';
   }
@@ -215,11 +220,11 @@ function calc() {
     if (floorTriggered) {
       $('targetExplanation').textContent = `ระบบปรับเป้าหมายให้อยู่ที่ขั้นต่ำปลอดภัย ${fmt(floor)} kcal/วัน เพื่อรักษาอัตราการเผาผลาญ`;
     } else if (goal === 'lose') {
-      $('targetExplanation').textContent = 'พลังงานที่แนะนำสำหรับการลดไขมันอย่างมีประสิทธิภาพและไม่เสียมวลกล้ามเนื้อ';
+      $('targetExplanation').textContent = 'กินน้อยกว่าที่ร่างกายใช้วันละ 500 กิโลแคลอรี่ เพื่อลดไขมัน';
     } else if (goal === 'gain') {
-      $('targetExplanation').textContent = 'พลังงานที่เพียงพอต่อการสร้างเส้นใยกล้ามเนื้อใหม่ควบคู่กับการออกกำลังกาย';
+      $('targetExplanation').textContent = 'กินเกินที่ใช้เล็กน้อย ควบคู่กับการฝึกแรงต้าน';
     } else {
-      $('targetExplanation').textContent = 'พลังงานสมดุลที่ช่วยให้น้ำหนักและสุขภาพโดยรวมคงที่';
+      $('targetExplanation').textContent = 'กินเท่าที่ร่างกายใช้ น้ำหนักจะคงที่';
     }
   }
 
@@ -246,6 +251,8 @@ function calc() {
   const pctP = Math.round((kP / kT) * 100);
   const pctC = Math.round((kC / kT) * 100);
   const pctF = Math.round((kF / kT) * 100);
+  $('ring').style.setProperty('--p', (kP / kT) * 100);
+  $('ring').style.setProperty('--c', ((kP + kC) / kT) * 100);
 
   // Update Macro Bars & Percentages
   const parts = [
@@ -282,8 +289,28 @@ function calc() {
   $('chicken').textContent = fmt(proteinGrams / 0.31);
   $('tofu').textContent = fmt(proteinGrams / 0.08);
 
+  // Thai meal equivalents (approximate protein per serving)
+  const perMeal = proteinGrams / 3;
+  $('perMeal').textContent = fmt(perMeal);
+  const dishes = [
+    { n: 'ข้าวมันไก่ 1 จาน', p: 25 },
+    { n: 'ข้าวกะเพราไก่ไข่ดาว 1 จาน', p: 28 },
+    { n: 'ต้มจืดเต้าหู้หมูสับ 1 ถ้วย', p: 12 },
+    { n: 'ไข่ต้ม 2 ฟอง', p: 12 },
+    { n: 'นมถั่วเหลืองไม่หวาน 1 กล่อง (250 มล.)', p: 8 },
+    { n: 'ปลาทูทอด 1 ตัวกลาง + ข้าว', p: 20 }
+  ];
+  $('thaiMealList').innerHTML = dishes.map(d => {
+    const share = Math.min(100, Math.round(d.p / perMeal * 100));
+    return `<div class="thai-meal"><div class="thai-meal-top"><span>${d.n}</span><b>~${d.p} ก.</b></div><div class="thai-meal-bar"><i style="width:${share}%"></i></div><small>คิดเป็น ${Math.round(d.p / perMeal * 100)}% ของโปรตีนต่อมื้อ</small></div>`;
+  }).join('');
+
+  // Remember last inputs
+  try { localStorage.setItem('nutricalc_last', JSON.stringify({ sex, age, h, w, act: $('act').value, goal })); } catch (e) {}
+
   // Save to History
   saveHistory({
+    ts: Date.now(),
     date: new Date().toLocaleDateString('th-TH', { hour: '2-digit', minute: '2-digit' }),
     sex: sex === 'm' ? 'ชาย' : 'หญิง',
     age, h, w,
@@ -312,7 +339,7 @@ function saveHistory(entry) {
   try {
     const list = getHistory();
     list.unshift(entry);
-    const trimmed = list.slice(0, 5); // Keep last 5 records
+    const trimmed = list.slice(0, 30); // Keep last 30 records for the trend chart
     localStorage.setItem('nutricalc_history', JSON.stringify(trimmed));
     renderHistory();
   } catch (e) {}
@@ -330,7 +357,8 @@ function renderHistory() {
   }
 
   historySec.style.display = 'block';
-  historyList.innerHTML = list.map(item => `
+  renderTrend(list);
+  historyList.innerHTML = list.slice(0, 5).map(item => `
     <div class="history-item">
       <div>
         <strong>BMI: ${item.bmi} (${item.bmiLabel})</strong> — เป้าหมาย ${fmt(item.target)} kcal
@@ -339,6 +367,34 @@ function renderHistory() {
       <span class="history-meta">${item.date}</span>
     </div>
   `).join('');
+}
+
+// Weight Trend Chart (inline SVG, themed via CSS variables)
+function renderTrend(list) {
+  const box = $('trendChart');
+  if (!box) return;
+  const pts = list.filter(i => i.w).slice(0, 30).reverse();
+  if (pts.length < 2) { box.hidden = true; return; }
+  const W = 600, H = 180, P = { l: 40, r: 14, t: 14, b: 26 };
+  const ws = pts.map(p => +p.w);
+  const lo = Math.floor(Math.min(...ws) - 1), hi = Math.ceil(Math.max(...ws) + 1);
+  const x = i => P.l + (W - P.l - P.r) * (i / (pts.length - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo));
+  const path = pts.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(+p.w).toFixed(1)}`).join(' ');
+  const dots = pts.map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(+p.w).toFixed(1)}" r="4" fill="var(--accent)"></circle>`).join('');
+  const diff = ws[ws.length - 1] - ws[0];
+  const sign = diff > 0 ? '+' : '';
+  box.innerHTML = `
+    <div class="trend-head"><strong>น้ำหนักตามเวลา (${pts.length} ครั้งล่าสุด)</strong><span>${sign}${diff.toFixed(1)} กก. จากครั้งแรก</span></div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟน้ำหนักตามเวลา">
+      <line x1="${P.l}" y1="${y(lo)}" x2="${W - P.r}" y2="${y(lo)}" stroke="var(--border)"></line>
+      <line x1="${P.l}" y1="${y(hi)}" x2="${W - P.r}" y2="${y(hi)}" stroke="var(--border)"></line>
+      <text x="${P.l - 6}" y="${y(hi) + 4}" text-anchor="end" fill="var(--text-muted)" font-size="12">${hi}</text>
+      <text x="${P.l - 6}" y="${y(lo) + 4}" text-anchor="end" fill="var(--text-muted)" font-size="12">${lo}</text>
+      <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"></path>
+      ${dots}
+    </svg>`;
+  box.hidden = false;
 }
 
 // Gender Segmented Buttons
@@ -410,7 +466,7 @@ if (quickFillBtn) {
     $('goal_keep').closest('.goal-card').classList.add('active');
     $('btnSexM').click();
     calc();
-    showToast('⚡ กรอกตัวอย่างข้อมูลเรียบร้อยแล้ว');
+    showToast('ใส่ข้อมูลตัวอย่างแล้ว');
   });
 }
 
@@ -428,9 +484,9 @@ if (copyBtn) {
     const fat = $('fat').textContent;
     const water = $('water').textContent;
 
-    const summary = `📊 ผลการคำนวณสุขภาพ (BMI Calculator)
+    const summary = `ผลคำนวณ BMI และพลังงานต่อวัน
 - ดัชนีมวลกาย (BMI): ${bmi} (${bmiLabel})
-- พลังงานเป้าหมายต่อวัน: ${target} kcal
+- พลังงานเป้าหมายต่อวัน: ${target} กิโลแคลอรี่
 - BMR ตอนพัก: ${bmr} kcal | TDEE รวมกิจกรรม: ${tdee} kcal
 - สารอาหารหลัก: โปรตีน ${protein}g | คาร์บ ${carb}g | ไขมัน ${fat}g
 - น้ำดื่มที่แนะนำ: ${water} ลิตร/วัน
@@ -438,9 +494,9 @@ if (copyBtn) {
 * ค่าทั้งหมดเป็นการประมาณเพื่อความรู้ทั่วไป ไม่ใช่คำแนะนำทางการแพทย์`;
 
     navigator.clipboard.writeText(summary).then(() => {
-      showToast('📋 คัดลอกสรุปผลลัพธ์ลงคลิปบอร์ดแล้ว!');
+      showToast('คัดลอกผลแล้ว');
     }).catch(() => {
-      showToast('ไม่สามารถคัดลอกได้โดยอัตโนมัติ');
+      showToast('คัดลอกไม่สำเร็จ ลองเลือกข้อความแล้วคัดลอกเอง');
     });
   });
 }
@@ -459,7 +515,7 @@ if (clearHistoryBtn) {
   clearHistoryBtn.addEventListener('click', () => {
     localStorage.removeItem('nutricalc_history');
     renderHistory();
-    showToast('ล้างประวัติเรียบร้อยแล้ว');
+    showToast('ล้างประวัติแล้ว');
   });
 }
 
@@ -473,3 +529,18 @@ document.querySelectorAll('input').forEach(i => {
 
 // Render existing history on load
 renderHistory();
+
+// Restore last used inputs (runs after all listeners are attached)
+(function restoreLast() {
+  try {
+    const d = JSON.parse(localStorage.getItem('nutricalc_last') || 'null');
+    if (!d) return;
+    if (d.age) $('age').value = d.age;
+    if (d.h) $('h').value = d.h;
+    if (d.w) $('w').value = d.w;
+    if (d.act) $('act').value = d.act;
+    $(d.sex === 'f' ? 'btnSexF' : 'btnSexM').click();
+    const g = $('goal_' + d.goal);
+    if (g) g.closest('.goal-card').click();
+  } catch (e) {}
+})();
