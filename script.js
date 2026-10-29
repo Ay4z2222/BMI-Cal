@@ -190,7 +190,7 @@ function calc() {
   $('water').textContent = waterLiters.toFixed(1);
   if ($('waterGlasses')) {
     const glasses = Math.round(waterLiters / 0.25);
-    $('waterGlasses').textContent = `ประมาณ ${glasses} แก้ว คิดจาก 33 มล. ต่อน้ำหนัก 1 กก.`;
+    $('waterGlasses').textContent = `(ราว ${glasses} แก้ว)`;
   }
 
   // Calorie Delta Metric
@@ -323,7 +323,9 @@ function calc() {
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 
   // Reveal Results & Smooth Scroll
+  document.querySelectorAll('#tdeeAdvice li').forEach(li => li.classList.toggle('on', li.dataset.goal === goal));
   $('result').hidden = false;
+  playEntrance();
   $('result').scrollIntoView({
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
   });
@@ -547,3 +549,37 @@ renderHistory();
     if (g) g.closest('.goal-card').click();
   } catch (e) {}
 })();
+
+// ---- Motion: sliding selector, entrance, scroll reveal ----
+document.querySelectorAll('.seg').forEach(seg => {
+  const pill = document.createElement('i');
+  pill.className = 'seg-pill';
+  seg.prepend(pill);
+  const place = () => {
+    const a = seg.querySelector('.active');
+    if (!a) return;
+    pill.style.width = a.offsetWidth + 'px';
+    pill.style.transform = `translateX(${a.offsetLeft}px)`;
+  };
+  seg.addEventListener('click', () => requestAnimationFrame(place));
+  new MutationObserver(() => requestAnimationFrame(place)).observe(seg, { attributes: true, subtree: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', place);
+  if (document.fonts) document.fonts.ready.then(place);
+  place();
+  requestAnimationFrame(() => requestAnimationFrame(() => pill.classList.add('ready')));
+});
+
+const revealIO = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); } });
+}, { threshold: 0.12 }) : null;
+
+function playEntrance() {
+  const r = $('result');
+  r.classList.remove('go');
+  void r.offsetWidth;
+  r.classList.add('go');
+  document.querySelectorAll('#result .block').forEach(b => {
+    b.classList.remove('in');
+    if (revealIO) { b.classList.add('rv'); revealIO.observe(b); }
+  });
+}
